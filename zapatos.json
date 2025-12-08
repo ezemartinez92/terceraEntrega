@@ -1,0 +1,72 @@
+[
+    {
+      "id": 1,
+      "nombre": "Alpargata Azul Marino",
+      "descripcion": "Las zapatillas para el hombre de campo y la ciudad.",
+      "precio": 99000,
+      "imagen": "https://www.casafagliano.com/wp-content/uploads/2019/06/oltremare_1.jpg"
+    },
+    {
+      "id": 2,
+      "nombre": "Alpargata Naranja",
+      "descripcion": "Las zapatillas para el hombre de campo y la ciudad.",
+      "precio": 99000,
+      "imagen": "https://www.casafagliano.com/wp-content/uploads/2019/06/Alpargata-Orange-Suede_1.jpg"
+    },
+    {
+      "id": 3,
+      "nombre": "Zapatilla de Cuero Negra",
+      "descripcion": "Zapatilla de calidad premium hecha a mano para hombres con calidad.",
+      "precio": 125000,
+      "imagen": "https://www.casafagliano.com/wp-content/uploads/2019/06/Buenos_Aires_Black_Calf_Cognac_Interior_1-1536x1025.jpg"
+    },
+    {
+      "id": 4,
+      "nombre": "Zapatilla de Cuero Marrón",
+      "descripcion": "Zapatilla de calidad premium hecha a mano para hombres con calidad.",
+      "precio": 125000,
+      "imagen": "https://www.casafagliano.com/wp-content/uploads/2019/06/sn_m_2-1536x1025.jpg"
+    },
+    {
+      "id": 5,
+      "nombre": "Zapatilla de Cuerpo Blanco",
+      "descripcion": "Zapatilla de calidad premium hecha a mano para hombres con calidad.",
+      "precio": 120000,
+      "imagen": "https://www.casafagliano.com/wp-content/uploads/2021/08/sn_w_1_1-1536x1025.jpg"
+    },
+    {
+      "id": 6,
+      "nombre": "Zapato de Vestir Negro ",
+      "descripcion": "Zapato de vestir color negro, calidad premium para hombres elegantes y de alto valor",
+      "precio": 150000,
+      "imagen": "https://www.casafagliano.com/wp-content/uploads/2018/08/Recoleta-Black-Calf_1.jpg"
+    },
+    {
+      "id": 7,
+      "nombre": "Zapato de Vestir Marrón ",
+      "descripcion": "Zapato de vestir color marrón, calidad premium para hombres elegantes y de alto valor",
+      "precio": 150000,
+      "imagen": "https://www.casafagliano.com/wp-content/uploads/2018/08/Ligure-Dark-Brown-Grained-Calf_1-768x512.jpg"
+    },
+    {
+      "id": 8,
+      "nombre": "Zapato de Vestir con correa",
+      "descripcion": "Zapato de vestir de cuero negro con ajuste de correa, primera calidad donde destaca su simplicidad",
+      "precio": 135000,
+      "imagen": "https://www.casafagliano.com/wp-content/uploads/2018/08/san-telmo_1.jpg"
+    },
+    {
+      "id": 9,
+      "nombre": "Zapato de Vestir con correa",
+      "descripcion": "Zapato de vestir de cuero marrón con ajuste de correa, primera calidad donde destaca su simplicidad",
+      "precio": 135000,
+      "imagen": "https://www.casafagliano.com/wp-content/uploads/2018/08/San-Telmo-Medium-Brown-Grained-Calf_1.jpg"
+    },
+    {
+      "id": 10,
+      "nombre": "Bota Old Money",
+      "descripcion": "Bota de cuero color marrón simulando el calzado de época para hombres estoicos",
+      "precio": 160000,
+      "imagen": "https://www.casafagliano.com/wp-content/uploads/2018/08/Mendoza-Chocolate-Brown-Calf-leather-1.jpg"
+    }
+  ]
