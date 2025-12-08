@@ -52,7 +52,7 @@ fetch("./zapatos.json") //Cargo todo si existe el archivo JSON
           </div>
           <div class="product-bottom">
             <div>
-              <div class="price">$${numberWithCommas(zapato.precio)}</div>
+              <div class="price">$${numeroConComa(zapato.precio)}</div>
             </div>
             <div class="d-flex align-items-center gap-2">
               <input type="number" min="1" value="1" class="form-control form-control-sm qty-input" style="width:84px;" data-id="${zapato.id}">
@@ -115,7 +115,7 @@ fetch("./zapatos.json") //Cargo todo si existe el archivo JSON
         div.innerHTML = `
           <div>
             <div class="nombre">${escapeHtml(item.nombre)}</div>
-            <div class="text-muted small">Precio unitario: $${numberWithCommas(item.precio)}</div>
+            <div class="text-muted small">Precio unitario: $${numeroConComa(item.precio)}</div>
           </div>
 
           <div class="cantidad-control">
@@ -209,7 +209,7 @@ fetch("./zapatos.json") //Cargo todo si existe el archivo JSON
         <div class="d-flex justify-content-between align-items-center">
           <div>
             <div class="small text-muted">Total a pagar</div>
-            <div class="h5 mb-0">$${numberWithCommas(total)}</div>
+            <div class="h5 mb-0">$${numeroConComa(total)}</div>
           </div>
         </div>
       `;
@@ -245,7 +245,7 @@ fetch("./zapatos.json") //Cargo todo si existe el archivo JSON
         checkoutResumen.innerHTML = `<p class="text-muted">Tu carrito está vacío.</p>`;
       } else {
         const filas = carrito.map(it =>
-          `<li>${escapeHtml(it.nombre)} x ${it.cantidad} — $${numberWithCommas(it.precio * it.cantidad)}</li>`
+          `<li>${escapeHtml(it.nombre)} x ${it.cantidad} — $${numeroConComa(it.precio * it.cantidad)}</li>`
         ).join('');
 
         const total = carrito.reduce((s, p) => s + p.precio * p.cantidad, 0);
@@ -253,7 +253,7 @@ fetch("./zapatos.json") //Cargo todo si existe el archivo JSON
           <div>
             <strong>Resumen:</strong>
             <ul class="mb-0" style="padding-left:18px;">${filas}</ul>
-            <div class="mt-2"><strong>Total:</strong> $${numberWithCommas(total)}</div>
+            <div class="mt-2"><strong>Total:</strong> $${numeroConComa(total)}</div>
           </div>
         `;
       }
@@ -327,7 +327,7 @@ fetch("./zapatos.json") //Cargo todo si existe el archivo JSON
         Swal.fire({
           icon: 'success',
           title: 'Pago realizado',
-          html: `<p>Gracias por tu compra. Total: <strong>$${numberWithCommas(total)}</strong></p><p>Orden generada.</p>`
+          html: `<p>Gracias por tu compra. Total: <strong>$${numeroConComa(total)}</strong></p><p>Orden generada.</p>`
         });
 
         carrito = [];
@@ -364,7 +364,7 @@ fetch("./zapatos.json") //Cargo todo si existe el archivo JSON
       });
     }
 
-    function numberWithCommas(x) {
+    function numeroConComa(x) {
       if (typeof x !== 'number') x = Number(x) || 0;
       return x.toLocaleString('es-AR');
     }
