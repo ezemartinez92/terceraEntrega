@@ -1,49 +1,58 @@
-fetch("./zapatos.json") //Cargo todo si existe el archivo JSON
-  .then(response => response.json())
+fetch("./zapatos.json")
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`Error HTTP ${response.status}: No se pudo cargar zapatos.json`);
+    }
+
+    return response.json().catch(() => {
+      throw new Error("El archivo zapatos.json tiene un formato inválido.");
+    });
+  })
   .then(zapatos => {
-    console.log("JSON cargado:", zapatos);
+    try {
+      console.log("JSON cargado:", zapatos);
 
-    // Selectores del DOM
-    const seccionProductos = document.getElementById("seccionProductos");
-    const listaCarrito = document.getElementById("listaCarrito");
-    const seccionTotal = document.getElementById("totalCarrito");
-    const botonVaciar = document.getElementById("btnVaciarCarrito");
-    const btnPagar = document.getElementById("btnPagar");
-    const contadorCarrito = document.getElementById("contadorCarrito");
-    const buscador = document.getElementById("buscador");
-    const ordenSelect = document.getElementById("ordenSelect");
-    const modoOscuroBtn = document.getElementById("modoOscuroBtn");
+      // Selectores del DOM
+      const seccionProductos = document.getElementById("seccionProductos");
+      const listaCarrito = document.getElementById("listaCarrito");
+      const seccionTotal = document.getElementById("totalCarrito");
+      const botonVaciar = document.getElementById("btnVaciarCarrito");
+      const btnPagar = document.getElementById("btnPagar");
+      const contadorCarrito = document.getElementById("contadorCarrito");
+      const buscador = document.getElementById("buscador");
+      const ordenSelect = document.getElementById("ordenSelect");
+      const modoOscuroBtn = document.getElementById("modoOscuroBtn");
 
-    const checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
-    const checkoutForm = document.getElementById('checkoutForm');
-    const checkoutResumen = document.getElementById('checkoutResumen');
-    const metodoPago = document.getElementById('metodoPago');
-    const detallesPago = document.getElementById('detallesPago');
+      const checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
+      const checkoutForm = document.getElementById('checkoutForm');
+      const checkoutResumen = document.getElementById('checkoutResumen');
+      const metodoPago = document.getElementById('metodoPago');
+      const detallesPago = document.getElementById('detallesPago');
 
-    // Carrito en localStorage
-    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+      // Carrito en localStorage
+      let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
-    let productosVisibles = [...zapatos];
+      let productosVisibles = [...zapatos];
 
-    // Inicialización
-    renderProductos(productosVisibles);
-    renderCarrito();
-    inicializarModoOscuro();
-    activarEventosPrincipales();
+      // Inicialización
+      renderProductos(productosVisibles);
+      renderCarrito();
+      inicializarModoOscuro();
+      activarEventosPrincipales();
 
-    // Render productos
-    function renderProductos(productos) {
-      seccionProductos.innerHTML = "";
-      if (productos.length === 0) {
-        seccionProductos.innerHTML = `<div class="col-12"><p class="text-muted">No se encontraron productos.</p></div>`;
-        return;
-      }
+      // Render productos
+      function renderProductos(productos) {
+        seccionProductos.innerHTML = "";
+        if (productos.length === 0) {
+          seccionProductos.innerHTML = `<div class="col-12"><p class="text-muted">No se encontraron productos.</p></div>`;
+          return;
+        }
 
-      productos.forEach(zapato => {
-        const col = document.createElement('div');
-        col.className = "col-sm-6 col-md-6 col-lg-6 col-xl-6";
+        productos.forEach(zapato => {
+          const col = document.createElement('div');
+          col.className = "col-sm-6 col-md-6 col-lg-6 col-xl-6";
 
-        col.innerHTML = `
+          col.innerHTML = `
         <article class="product-card">
           <img class="product-img" src="${zapato.imagen}" alt="${escapeHtml(zapato.nombre)}" />
           <div class="product-meta">
@@ -63,56 +72,56 @@ fetch("./zapatos.json") //Cargo todo si existe el archivo JSON
           </div>
         </article>
       `;
-        seccionProductos.appendChild(col);
+          seccionProductos.appendChild(col);
 
-        const btnAgregar = col.querySelector('.btn-add');
-        const qtyInput = col.querySelector('.qty-input');
+          const btnAgregar = col.querySelector('.btn-add');
+          const qtyInput = col.querySelector('.qty-input');
 
-        btnAgregar.addEventListener('click', () => {
-          const qty = Math.max(1, parseInt(qtyInput.value || 1));
-          agregarAlCarritoPorId(zapato.id, qty);
-        });
-      });
-    }
-
-    // Agregar al carrito
-    function agregarAlCarritoPorId(id, cantidad = 1) {
-      const producto = zapatos.find(p => p.id === id);
-      if (!producto) return;
-
-      const existente = carrito.find(item => item.id === id);
-      if (existente) {
-        existente.cantidad += cantidad;
-      } else {
-        carrito.push({
-          id: producto.id,
-          nombre: producto.nombre,
-          precio: producto.precio,
-          cantidad: cantidad
+          btnAgregar.addEventListener('click', () => {
+            const qty = Math.max(1, parseInt(qtyInput.value || 1));
+            agregarAlCarritoPorId(zapato.id, qty);
+          });
         });
       }
 
-      localStorage.setItem('carrito', JSON.stringify(carrito));
-      renderCarrito();
-      mostrarToast(`${producto.nombre} agregado al carrito (${cantidad})`);
-    }
+      // Agregar al carrito
+      function agregarAlCarritoPorId(id, cantidad = 1) {
+        const producto = zapatos.find(p => p.id === id);
+        if (!producto) return;
 
-    // Render carrito
-    function renderCarrito() {
-      listaCarrito.innerHTML = "";
+        const existente = carrito.find(item => item.id === id);
+        if (existente) {
+          existente.cantidad += cantidad;
+        } else {
+          carrito.push({
+            id: producto.id,
+            nombre: producto.nombre,
+            precio: producto.precio,
+            cantidad: cantidad
+          });
+        }
 
-      if (carrito.length === 0) {
-        listaCarrito.innerHTML = `<p class="text-muted">Tu carrito está vacío.</p>`;
-        seccionTotal.innerHTML = "";
-        contadorCarrito.textContent = "0";
-        return;
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+        renderCarrito();
+        mostrarToast(`${producto.nombre} agregado al carrito (${cantidad})`);
       }
 
-      carrito.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = "item-carrito";
+      // Render carrito
+      function renderCarrito() {
+        listaCarrito.innerHTML = "";
 
-        div.innerHTML = `
+        if (carrito.length === 0) {
+          listaCarrito.innerHTML = `<p class="text-muted">Tu carrito está vacío.</p>`;
+          seccionTotal.innerHTML = "";
+          contadorCarrito.textContent = "0";
+          return;
+        }
+
+        carrito.forEach((item, index) => {
+          const div = document.createElement('div');
+          div.className = "item-carrito";
+
+          div.innerHTML = `
           <div>
             <div class="nombre">${escapeHtml(item.nombre)}</div>
             <div class="text-muted small">Precio unitario: $${numeroConComa(item.precio)}</div>
@@ -125,87 +134,87 @@ fetch("./zapatos.json") //Cargo todo si existe el archivo JSON
             <button class="qty-btn btn-remove text-danger ms-2" data-index="${index}" title="Eliminar"><i class="bi bi-trash"></i></button>
           </div>
         `;
-        listaCarrito.appendChild(div);
-      });
-
-      document.querySelectorAll('.btn-decrease').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const idx = Number(e.currentTarget.getAttribute('data-index'));
-          cambiarCantidad(idx, carrito[idx].cantidad - 1);
+          listaCarrito.appendChild(div);
         });
-      });
-      document.querySelectorAll('.btn-increase').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const idx = Number(e.currentTarget.getAttribute('data-index'));
-          cambiarCantidad(idx, carrito[idx].cantidad + 1);
-        });
-      });
-      document.querySelectorAll('.btn-remove').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const idx = Number(e.currentTarget.getAttribute('data-index'));
-          eliminarProducto(idx);
-        });
-      });
 
-      renderTotal();
-      contadorCarrito.textContent = carrito.reduce((s, it) => s + it.cantidad, 0);
-    }
+        document.querySelectorAll('.btn-decrease').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const idx = Number(e.currentTarget.getAttribute('data-index'));
+            cambiarCantidad(idx, carrito[idx].cantidad - 1);
+          });
+        });
+        document.querySelectorAll('.btn-increase').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const idx = Number(e.currentTarget.getAttribute('data-index'));
+            cambiarCantidad(idx, carrito[idx].cantidad + 1);
+          });
+        });
+        document.querySelectorAll('.btn-remove').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const idx = Number(e.currentTarget.getAttribute('data-index'));
+            eliminarProducto(idx);
+          });
+        });
 
-    function cambiarCantidad(index, nuevaCantidad) {
-      if (nuevaCantidad <= 0) {
+        renderTotal();
+        contadorCarrito.textContent = carrito.reduce((s, it) => s + it.cantidad, 0);
+      }
+
+      function cambiarCantidad(index, nuevaCantidad) {
+        if (nuevaCantidad <= 0) {
+          Swal.fire({
+            title: 'Eliminar producto?',
+            text: 'La cantidad es 0. ¿Deseas eliminarlo?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+          }).then(result => {
+            if (result.isConfirmed) eliminarProducto(index);
+          });
+          return;
+        }
+        carrito[index].cantidad = nuevaCantidad;
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+        renderCarrito();
+      }
+
+      function eliminarProducto(index) {
+        const prod = carrito[index];
+        carrito.splice(index, 1);
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+        renderCarrito();
+        mostrarToast(`${prod.nombre} eliminado`, 'info');
+      }
+
+      // Vaciar carrito
+      botonVaciar.addEventListener('click', () => {
+        if (carrito.length === 0) {
+          mostrarToast('El carrito ya está vacío', 'info');
+          return;
+        }
+
         Swal.fire({
-          title: 'Eliminar producto?',
-          text: 'La cantidad es 0. ¿Deseas eliminarlo?',
-          icon: 'question',
+          title: 'Vaciar carrito',
+          text: '¿Estás seguro?',
+          icon: 'warning',
           showCancelButton: true,
-          confirmButtonText: 'Sí, eliminar',
+          confirmButtonText: 'Sí, vaciar',
           cancelButtonText: 'Cancelar'
         }).then(result => {
-          if (result.isConfirmed) eliminarProducto(index);
+          if (result.isConfirmed) {
+            carrito = [];
+            localStorage.removeItem('carrito');
+            renderCarrito();
+            mostrarToast('Carrito vaciado', 'success');
+          }
         });
-        return;
-      }
-      carrito[index].cantidad = nuevaCantidad;
-      localStorage.setItem('carrito', JSON.stringify(carrito));
-      renderCarrito();
-    }
-
-    function eliminarProducto(index) {
-      const prod = carrito[index];
-      carrito.splice(index, 1);
-      localStorage.setItem('carrito', JSON.stringify(carrito));
-      renderCarrito();
-      mostrarToast(`${prod.nombre} eliminado`, 'info');
-    }
-
-    // Vaciar carrito
-    botonVaciar.addEventListener('click', () => {
-      if (carrito.length === 0) {
-        mostrarToast('El carrito ya está vacío', 'info');
-        return;
-      }
-
-      Swal.fire({
-        title: 'Vaciar carrito',
-        text: '¿Estás seguro?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, vaciar',
-        cancelButtonText: 'Cancelar'
-      }).then(result => {
-        if (result.isConfirmed) {
-          carrito = [];
-          localStorage.removeItem('carrito');
-          renderCarrito();
-          mostrarToast('Carrito vaciado', 'success');
-        }
       });
-    });
 
-    // Total
-    function renderTotal() {
-      const total = carrito.reduce((s, p) => s + p.precio * p.cantidad, 0);
-      seccionTotal.innerHTML = `
+      // Total
+      function renderTotal() {
+        const total = carrito.reduce((s, p) => s + p.precio * p.cantidad, 0);
+        seccionTotal.innerHTML = `
         <div class="d-flex justify-content-between align-items-center">
           <div>
             <div class="small text-muted">Total a pagar</div>
@@ -213,57 +222,57 @@ fetch("./zapatos.json") //Cargo todo si existe el archivo JSON
           </div>
         </div>
       `;
-    }
+      }
 
-    // Filtro y orden
-    buscador.addEventListener('input', aplicarFiltroYOrden);
-    ordenSelect.addEventListener('change', aplicarFiltroYOrden);
+      // Filtro y orden
+      buscador.addEventListener('input', aplicarFiltroYOrden);
+      ordenSelect.addEventListener('change', aplicarFiltroYOrden);
 
-    function aplicarFiltroYOrden() {
-      const q = buscador.value.trim().toLowerCase();
-      productosVisibles = zapatos.filter(p => {
-        return p.nombre.toLowerCase().includes(q) || p.descripcion.toLowerCase().includes(q);
+      function aplicarFiltroYOrden() {
+        const q = buscador.value.trim().toLowerCase();
+        productosVisibles = zapatos.filter(p => {
+          return p.nombre.toLowerCase().includes(q) || p.descripcion.toLowerCase().includes(q);
+        });
+
+        const orden = ordenSelect.value;
+        if (orden === 'precio-asc') productosVisibles.sort((a,b) => a.precio - b.precio);
+        else if (orden === 'precio-desc') productosVisibles.sort((a,b) => b.precio - a.precio);
+        else if (orden === 'nombre-asc') productosVisibles.sort((a,b) => a.nombre.localeCompare(b.nombre));
+        else if (orden === 'nombre-desc') productosVisibles.sort((a,b) => b.nombre.localeCompare(a.nombre));
+
+        renderProductos(productosVisibles);
+      }
+
+      // Checkout
+      btnPagar.addEventListener('click', () => {
+        actualizarResumenCheckout();
+        checkoutModal.show();
       });
 
-      const orden = ordenSelect.value;
-      if (orden === 'precio-asc') productosVisibles.sort((a,b) => a.precio - b.precio);
-      else if (orden === 'precio-desc') productosVisibles.sort((a,b) => b.precio - a.precio);
-      else if (orden === 'nombre-asc') productosVisibles.sort((a,b) => a.nombre.localeCompare(b.nombre));
-      else if (orden === 'nombre-desc') productosVisibles.sort((a,b) => b.nombre.localeCompare(a.nombre));
+      function actualizarResumenCheckout() {
+        if (carrito.length === 0) {
+          checkoutResumen.innerHTML = `<p class="text-muted">Tu carrito está vacío.</p>`;
+        } else {
+          const filas = carrito.map(it =>
+            `<li>${escapeHtml(it.nombre)} x ${it.cantidad} — $${numeroConComa(it.precio * it.cantidad)}</li>`
+          ).join('');
 
-      renderProductos(productosVisibles);
-    }
-
-    // Checkout
-    btnPagar.addEventListener('click', () => {
-      actualizarResumenCheckout();
-      checkoutModal.show();
-    });
-
-    function actualizarResumenCheckout() {
-      if (carrito.length === 0) {
-        checkoutResumen.innerHTML = `<p class="text-muted">Tu carrito está vacío.</p>`;
-      } else {
-        const filas = carrito.map(it =>
-          `<li>${escapeHtml(it.nombre)} x ${it.cantidad} — $${numeroConComa(it.precio * it.cantidad)}</li>`
-        ).join('');
-
-        const total = carrito.reduce((s, p) => s + p.precio * p.cantidad, 0);
-        checkoutResumen.innerHTML = `
+          const total = carrito.reduce((s, p) => s + p.precio * p.cantidad, 0);
+          checkoutResumen.innerHTML = `
           <div>
             <strong>Resumen:</strong>
             <ul class="mb-0" style="padding-left:18px;">${filas}</ul>
             <div class="mt-2"><strong>Total:</strong> $${numeroConComa(total)}</div>
           </div>
         `;
+        }
       }
-    }
 
-    metodoPago.addEventListener('change', (e) => {
-      const val = e.target.value;
-      detallesPago.innerHTML = "";
-      if (val === 'tarjeta') {
-        detallesPago.innerHTML = `
+      metodoPago.addEventListener('change', (e) => {
+        const val = e.target.value;
+        detallesPago.innerHTML = "";
+        if (val === 'tarjeta') {
+          detallesPago.innerHTML = `
           <div class="mb-2">
             <label class="form-label">Número de tarjeta</label>
             <input class="form-control" required minlength="12" maxlength="19" name="numTarjeta">
@@ -279,15 +288,15 @@ fetch("./zapatos.json") //Cargo todo si existe el archivo JSON
             </div>
           </div>
         `;
-      } else if (val === 'mercadopago') {
-        detallesPago.innerHTML = `
+        } else if (val === 'mercadopago') {
+          detallesPago.innerHTML = `
           <div class="mb-2">
             <label class="form-label">Usuario MercadoPago</label>
             <input class="form-control" required name="mpUser">
           </div>
         `;
-      } else if (val === 'transferencia') {
-        detallesPago.innerHTML = `
+        } else if (val === 'transferencia') {
+          detallesPago.innerHTML = `
           <div class="mb-2">
             <label class="form-label">Titular</label>
             <input class="form-control" required name="titular">
@@ -297,103 +306,132 @@ fetch("./zapatos.json") //Cargo todo si existe el archivo JSON
             <input class="form-control" required name="cbu">
           </div>
         `;
-      }
-    });
-
-    checkoutForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!checkoutForm.checkValidity()) {
-        checkoutForm.classList.add('was-validated');
-        return;
-      }
-
-      if (carrito.length === 0) {
-        Swal.fire('Carrito vacío', 'Agrega productos antes de pagar.', 'info');
-        return;
-      }
-
-      Swal.fire({
-        title: 'Procesando pago...',
-        html: 'No cierres esta ventana',
-        didOpen: () => Swal.showLoading(),
-        allowOutsideClick: false,
-        allowEscapeKey: false
+        }
       });
 
-      setTimeout(() => {
-        Swal.close();
-        const total = carrito.reduce((s, p) => s + p.precio * p.cantidad, 0);
+      checkoutForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!checkoutForm.checkValidity()) {
+          checkoutForm.classList.add('was-validated');
+          return;
+        }
+
+        if (carrito.length === 0) {
+          Swal.fire('Carrito vacío', 'Agrega productos antes de pagar.', 'info');
+          return;
+        }
 
         Swal.fire({
-          icon: 'success',
-          title: 'Pago realizado',
-          html: `<p>Gracias por tu compra. Total: <strong>$${numeroConComa(total)}</strong></p><p>Orden generada.</p>`
+          title: 'Procesando pago...',
+          html: 'No cierres esta ventana',
+          didOpen: () => Swal.showLoading(),
+          allowOutsideClick: false,
+          allowEscapeKey: false
         });
 
-        carrito = [];
-        localStorage.removeItem('carrito');
-        renderCarrito();
+        setTimeout(() => {
+          Swal.close();
+          const total = carrito.reduce((s, p) => s + p.precio * p.cantidad, 0);
 
-        const modalEl = document.getElementById('checkoutModal');
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        if (modal) modal.hide();
+          Swal.fire({
+            icon: 'success',
+            title: 'Pago realizado',
+            html: `<p>Gracias por tu compra. Total: <strong>$${numeroConComa(total)}</strong></p><p>Orden generada.</p>`
+          });
 
-        checkoutForm.reset();
-        checkoutForm.classList.remove('was-validated');
-      }, 1200);
+          carrito = [];
+          localStorage.removeItem('carrito');
+          renderCarrito();
+
+          const modalEl = document.getElementById('checkoutModal');
+          const modal = bootstrap.Modal.getInstance(modalEl);
+          if (modal) modal.hide();
+
+          checkoutForm.reset();
+          checkoutForm.classList.remove('was-validated');
+        }, 1200);
+      });
+
+      function inicializarModoOscuro() {
+        const modo = localStorage.getItem('modoOscuro');
+        if (modo === 'true') document.body.classList.add('dark');
+
+        modoOscuroBtn.addEventListener('click', () => {
+          document.body.classList.toggle('dark');
+          localStorage.setItem('modoOscuro', document.body.classList.contains('dark'));
+        });
+      }
+
+      function mostrarToast(message, icon = 'success') {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          timer: 2000,
+          showConfirmButton: false,
+          icon,
+          title: message
+        });
+      }
+
+      function numeroConComa(x) {
+        if (typeof x !== 'number') x = Number(x) || 0;
+        return x.toLocaleString('es-AR');
+      }
+
+      function escapeHtml(unsafe) {
+        return (unsafe + '').replace(/[&<"'>]/g, function(m) {
+          return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+          }[m];
+        });
+      }
+
+      function activarEventosPrincipales() {
+        document.getElementById('checkoutModal').addEventListener('hidden.bs.modal', () => {
+          checkoutForm.reset();
+          detallesPago.innerHTML = "";
+          checkoutForm.classList.remove('was-validated');
+        });
+
+        document.querySelectorAll('[data-bs-target="#checkoutModal"]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            actualizarResumenCheckout();
+          });
+        });
+      }
+
+    } catch (error) {
+      console.error("Error interno en la inicialización:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Error interno",
+        text: "Ocurrió un problema inicializando la tienda. Revisá la consola.",
+      });
+    }
+  })
+  .catch(error => {
+    console.error("Error al cargar JSON:", error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Error al cargar productos",
+      html: `
+        <p>No se pudo cargar <strong>zapatos.json</strong>.</p>
+        <p style="font-size: 0.9rem;">${error.message}</p>
+      `,
     });
 
-    function inicializarModoOscuro() {
-      const modo = localStorage.getItem('modoOscuro');
-      if (modo === 'true') document.body.classList.add('dark');
-
-      modoOscuroBtn.addEventListener('click', () => {
-        document.body.classList.toggle('dark');
-        localStorage.setItem('modoOscuro', document.body.classList.contains('dark'));
-      });
+    const seccionProductos = document.getElementById("seccionProductos");
+    if (seccionProductos) {
+      seccionProductos.innerHTML = `
+        <div class="alert alert-danger text-center">
+          No se pudieron cargar los productos. Intenta más tarde.
+        </div>
+      `;
     }
-
-    function mostrarToast(message, icon = 'success') {
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        timer: 2000,
-        showConfirmButton: false,
-        icon,
-        title: message
-      });
-    }
-
-    function numeroConComa(x) {
-      if (typeof x !== 'number') x = Number(x) || 0;
-      return x.toLocaleString('es-AR');
-    }
-
-    function escapeHtml(unsafe) {
-      return (unsafe + '').replace(/[&<"'>]/g, function(m) {
-        return {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#039;'
-        }[m];
-      });
-    }
-
-    function activarEventosPrincipales() {
-      document.getElementById('checkoutModal').addEventListener('hidden.bs.modal', () => {
-        checkoutForm.reset();
-        detallesPago.innerHTML = "";
-        checkoutForm.classList.remove('was-validated');
-      });
-
-      document.querySelectorAll('[data-bs-target="#checkoutModal"]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          actualizarResumenCheckout();
-        });
-      });
-    }
-
-  })
-  .catch(error => console.error("Error al cargar JSON:", error));
+  });
