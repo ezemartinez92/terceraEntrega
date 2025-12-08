@@ -1,4 +1,4 @@
-fetch("./zapatos.json")
+fetch("./zapatos.json") //Cargo todo si existe el archivo JSON
   .then(response => response.json())
   .then(zapatos => {
     console.log("JSON cargado:", zapatos);
