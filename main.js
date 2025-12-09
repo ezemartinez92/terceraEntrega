@@ -1,3 +1,4 @@
+//Arranco tomando los datos del JSON
 fetch("./zapatos.json")
   .then(response => {
     if (!response.ok) {
@@ -10,7 +11,7 @@ fetch("./zapatos.json")
   })
   .then(zapatos => {
     try {
-      console.log("JSON cargado:", zapatos);
+      console.log("JSON cargado:", zapatos); //Aca ya entré
 
       // Selectores del DOM
       const seccionProductos = document.getElementById("seccionProductos");
@@ -47,7 +48,6 @@ fetch("./zapatos.json")
           seccionProductos.innerHTML = `<div class="col-12"><p class="text-muted">No se encontraron productos.</p></div>`;
           return;
         }
-
         productos.forEach(zapato => {
           const col = document.createElement('div');
           col.className = "col-sm-6 col-md-6 col-lg-6 col-xl-6";
